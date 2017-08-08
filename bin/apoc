@@ -1,28 +1,12 @@
 #!/usr/bin/env ruby
 
 require 'open-uri'
-require_relative '../lib/apoc'
+# require_relative '../lib/apoc'
 
-apoc_runner_url = ENV['APOC_RUNNER_URL']
-
-# Should consider using DRB to run this over the network, rather than
-# transferring the source, to keep it private
-def load_runner(url)
-  begin
-    open('bin/apoc_runner', 'wb') do |_|
-      eval(open(url).read)
-    end
-  rescue
-    false
-  end
-end
-
-# get better error messages here?
-
-if apoc_runner_url && load_runner(apoc_runner_url)
-  # load 'bin/apoc_runner'
+def load_runner
+  eval(open(ENV['APOC_RUNNER_URL']).read)
   Apoc::Runner.invoke
-else
+rescue
   puts "You must provide a path to a valid Apocalytics runner"
   exit 1
 end
