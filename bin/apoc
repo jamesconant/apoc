@@ -1,4 +1,26 @@
 #!/usr/bin/env ruby
 
+require 'open-uri'
 require_relative '../lib/apoc'
-Apoc.hello
+
+apoc_runner_url = ENV['APOC_RUNNER_URL']
+
+def get_file(url)
+  begin
+    open('bin/apoc_runner', 'wb') do |file|
+      file << open(url).read
+    end
+  rescue
+    false
+  end
+end
+
+# get better error messages here?
+
+if apoc_runner_url && get_file(apoc_runner_url)
+  load 'bin/apoc_runner'
+  Apoc::Runner.invoke
+else
+  puts "You must provide a path to a valid Apocalytics runner"
+  exit 1
+end
