@@ -5,10 +5,12 @@ require_relative '../lib/apoc'
 
 apoc_runner_url = ENV['APOC_RUNNER_URL']
 
-def get_file(url)
+# Should consider using DRB to run this over the network, rather than
+# transferring the source, to keep it private
+def load_runner(url)
   begin
-    open('bin/apoc_runner', 'wb') do |file|
-      file << open(url).read
+    open('bin/apoc_runner', 'wb') do |_|
+      eval(open(url).read)
     end
   rescue
     false
@@ -17,8 +19,8 @@ end
 
 # get better error messages here?
 
-if apoc_runner_url && get_file(apoc_runner_url)
-  load 'bin/apoc_runner'
+if apoc_runner_url && load_runner(apoc_runner_url)
+  # load 'bin/apoc_runner'
   Apoc::Runner.invoke
 else
   puts "You must provide a path to a valid Apocalytics runner"
